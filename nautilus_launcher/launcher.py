@@ -44,11 +44,14 @@ def _submit(args, name):
 	template = _read_text('nautilus/job.yaml')
 	wandb_key = _read_text('nautilus/wandb.key')
 	cfg = yaml.safe_load(Path(f'{os.getcwd()}/nautilus/config.yaml').read_text())
+	cmd = cfg.get('cmd', None)
+	assert cmd is not None, f'No cmd found in config:\n{cfg}'
 	cfg.update(
 		name='nh-'+_encode_name(name),
 		namespace=context,
 		haosu='In' if 'haosu' in context else 'NotIn',
 		wandb_key=wandb_key,
+		cmd=' '.join([cmd, args]),
 	)
 	while '{{' in template:
 		for key, value in cfg.items():
